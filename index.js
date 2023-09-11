@@ -70,7 +70,7 @@ class Musician {
 
   play = () => {
     // метод, що виводить рядок в консоль <#name> грає на <#instrument>
-    console.log(`${this.name} грає на ${this.instrument}`);
+    console.log(`${this.#name} грає на ${this.#instrument}`);
   };
 }
 
@@ -130,7 +130,7 @@ class Guitarist extends Musician {
   set band(newBand) {
     this.#band = newBand;
   }
-  joinBand() {
+  joinBand(band) {
     this.#band = band;
   }
   play = () => {
@@ -196,7 +196,7 @@ class Bassist extends Musician {
   set band(newBand) {
     this.#band = newBand;
   }
-  joinBand() {
+  joinBand(band) {
     this.#band = band;
   }
   play = () => {
@@ -213,7 +213,7 @@ class Bassist extends Musician {
 // Третій аргумент - це об'єкт, який описує властивість. У цьому випадку ми хочемо додати сетер,
 // тому ми вказуємо функцію, яка буде викликатися при спробі встановити властивість 'band'.  this.band = newBand
 Object.defineProperty(Musician.prototype, "band", {
-  set(newBand) {
+  set: function (newBand) {
     this.band = newBand;
   },
 });
@@ -243,10 +243,10 @@ class Band {
   // Якщо ні виводимо в консоль повідомлення Новий учасник повинен бути екземпляром класу Musician
   // Створюємо метод playMusic(), за допомогою forEach перебираємо масив і викликаємо метод play() для кожного учасника гурту
   #name;
-  #members = [];
-  constructor(name, members = []) {
+  #members;
+  constructor(name, members) {
     this.#name = name;
-    this.#members = members;
+    this.#members = [...members];
   }
   get name() {
     return this.#name;
@@ -257,14 +257,14 @@ class Band {
   set name(newName) {
     this.#name = newName;
   }
-  addMember = (newMember) => {
+  addMember(newMember) {
     if (newMember instanceof Musician) {
-      newMember.band = this;
+      newMember.band = this.#name;
       this.#members.push(newMember);
     } else {
       console.log("Новий учасник повинен бути екземпляром класу Musician");
     }
-  };
+  }
   playMusic = () => {
     this.#members.forEach((member) => {
       member.play();
